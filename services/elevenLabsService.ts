@@ -1,20 +1,14 @@
-
-import { ElevenLabsClient, play } from '@elevenlabs/elevenlabs-js';
+import { ElevenLabsClient } from "elevenlabs"; // Import yang benar
 import { KEY_MANAGER } from './geminiService';
 import { debugService } from './debugService';
 
 // --- VOICE MAPPING SYSTEM ---
 export const VOICE_MAPPING: Record<string, string> = {
-    // ID Melsa sesuai request Anda
     'Melsa': 'JBFqnCBsd6RMkjVDRZzb', 
-    
-    // Google Gemini Equivalents -> ElevenLabs Standard Voices
-    'Zephyr': '21m00Tcm4TlvDq8ikWAM', // Rachel
-    'Kore': 'EXAVITQu4vr4xnSDxMaL',   // Bella
-    'Fenrir': 'TxGEqnHWrfWFTfGW9XjX', // Josh
-    'Puck': 'IKne3meq5aSn9XLyUdCD',   // Charlie
-    
-    // Fallback
+    'Zephyr': '21m00Tcm4TlvDq8ikWAM',
+    'Kore': 'EXAVITQu4vr4xnSDxMaL',  
+    'Fenrir': 'TxGEqnHWrfWFTfGW9XjX',
+    'Puck': 'IKne3meq5aSn9XLyUdCD',   
     'default': 'JBFqnCBsd6RMkjVDRZzb'
 };
 
@@ -28,7 +22,6 @@ export async function speakWithMelsa(text: string, voiceNameOverride?: string): 
     }
 
     try {
-        // 1. Determine Voice ID
         let selectedName = voiceNameOverride;
         
         if (!selectedName) {
@@ -44,18 +37,22 @@ export async function speakWithMelsa(text: string, voiceNameOverride?: string): 
             apiKey: apiKey, 
         });
 
-        // Menggunakan Model Multilingual v2 sesuai request
-        const audio = await elevenlabs.textToSpeech.convert(
-            voiceId,
-            {
-                text: text,
-                model_id: 'eleven_multilingual_v2', 
-                output_format: 'mp3_44100_128',
-            }
-        );
+        // Versi terbaru menggunakan .generate() bukan .convert()
+        const audioStream = await elevenlabs.generate({
+            voice: voiceId,
+            text: text,
+            model_id: "eleven_multilingual_v2",
+        });
 
         debugService.log('INFO', 'MELSA_VOICE', 'PLAY', 'Audio received. Playing stream...');
-        await play(audio);
+
+        // Karena 'play' dari SDK lama sering bermasalah di browser, 
+        // kita gunakan standar Web Audio API yang lebih stabil:
+        const response = new Response(audioStream as any);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        await audio.play();
 
     } catch (error: any) {
         debugService.log('ERROR', 'MELSA_VOICE', 'FAIL', error.message);
