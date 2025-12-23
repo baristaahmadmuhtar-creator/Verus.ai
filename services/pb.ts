@@ -3,7 +3,7 @@ import PocketBase from 'pocketbase';
 // 1. KONFIGURASI URL
 // Menggunakan import.meta.env (Standar Vite) agar .env terbaca.
 // Pastikan di file .env variabelnya bernama VITE_POCKETBASE_URL
-const PB_URL = import.meta.env.VITE_POCKETBASE_URL || 'http://127.0.0.1:8090';
+const PB_URL = import.meta.env.VITE_POCKETBASE_URL || 'https://unrouged-nonvesicularly-dalton.ngrok-free.dev';
 
 console.log(`[DATABASE] Connecting to: ${PB_URL}`);
 
