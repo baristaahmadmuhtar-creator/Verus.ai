@@ -19,7 +19,7 @@
     "groq-sdk": "^0.9.1",
     "lucide-react": "^0.475.0",
     "openai": "^4.28.0",
-    "pocketbase": "^0.21.3",
+    "pocketbase": "^0.21.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-markdown": "^9.0.0",
