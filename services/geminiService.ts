@@ -1,4 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+
+import { GoogleGenAI, Modality, Type } from "@google/genai";
 
 // --- KEY ROTATION SYSTEM ---
 
